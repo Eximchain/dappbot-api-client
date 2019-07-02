@@ -1,0 +1,33 @@
+{
+  "name": "dappbot-api-client",
+  "version": "0.0.1",
+  "description": "Client for the DappBot API",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eximchain/dappbot-api-client.git"
+  },
+  "keywords": [
+    "dappbot"
+  ],
+  "author": "John O'Sullivan <john@eximchain.com>",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Eximchain/dappbot-api-client/issues"
+  },
+  "homepage": "https://github.com/Eximchain/dappbot-api-client#readme",
+  "dependencies": {
+    "ethereum-types": "^2.1.2",
+    "typescript": "^3.5.2"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "ts-node": "^8.3.0"
+  }
+}
