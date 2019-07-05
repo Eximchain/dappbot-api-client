@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/Eximchain/dappbot-api-client#readme",
   "dependencies": {
+    "@types/request-promise-native": "^1.0.16",
     "ethereum-types": "^2.1.2",
+    "request-promise-native": "^1.0.7",
     "typescript": "^3.5.2"
   },
   "devDependencies": {
