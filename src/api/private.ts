@@ -1,57 +1,22 @@
-import User from '@eximchain/dappbot-types/spec/user';
-import { MessageResponse } from '@eximchain/dappbot-types/spec/responses';
 import { CreateDapp, DeleteDapp, UpdateDapp, ReadDapp, ListDapps } from '@eximchain/dappbot-types/spec/methods/private';
-import { RequestFactory, ResourceFactory, AuthSetter, PathBuilder } from '../types';
-import omit from 'lodash.omit';
-
-export interface DappNameProperty {
-  DappName : string
-}
+import { APIModuleArgs } from '../types';
+import RequestBuilder from '../requestBuilder';
 
 export class PrivateAPI {
-  constructor(
-    auth:User.AuthData, 
-    setAuth:AuthSetter,
-    resourceFactory:ResourceFactory, 
-    requestFactory:RequestFactory
-  ){
-    this.auth = auth;
-    this.setAuth = setAuth;
-    this.resourceFactory = resourceFactory;
-    this.requestFactory = requestFactory;
+  constructor({ builder }:APIModuleArgs){
+    this.builder = builder;
   }
-  auth:User.AuthData
-  setAuth:AuthSetter
-  resourceFactory:ResourceFactory
-  requestFactory:RequestFactory
+  builder:RequestBuilder
 
-  create() {
-    return (args:CreateDapp.Args & DappNameProperty) => {
-      return this.resourceFactory<CreateDapp.Args, MessageResponse>(CreateDapp.Path(args.DappName), CreateDapp.HTTP)(omit(args, ['DappName']));
-    }
-  }
+  create = this.builder.argAndPathFactory<CreateDapp.Args, CreateDapp.Response>(CreateDapp.Path, CreateDapp.HTTP);
+
+  read = this.builder.argAndPathFactory<ReadDapp.Args, ReadDapp.Response>(ReadDapp.Path, ReadDapp.HTTP)
+
+  delete = this.builder.argAndPathFactory<DeleteDapp.Args, DeleteDapp.Response>(DeleteDapp.Path, DeleteDapp.HTTP)
+
+  update = this.builder.argAndPathFactory<UpdateDapp.Args, UpdateDapp.Response>(UpdateDapp.Path, UpdateDapp.HTTP)
   
-  delete() {
-    return (dappName:string) => {
-      return this.resourceFactory<DeleteDapp.Args, DeleteDapp.Response>(DeleteDapp.Path(dappName), DeleteDapp.HTTP)();
-    }
-  }
-  
-  edit() {
-    return (args:UpdateDapp.Args & DappNameProperty) => {
-      return this.resourceFactory<UpdateDapp.Args, UpdateDapp.Response>(UpdateDapp.Path(args.DappName), UpdateDapp.HTTP)(omit(args, ['DappName']))
-    }
-  }
-  
-  list() {
-    return this.resourceFactory<ListDapps.Args, ListDapps.Response>(ListDapps.Path, ListDapps.HTTP)
-  }
-  
-  read() {
-    return (dappName:string) => {
-      return this.resourceFactory<ReadDapp.Args, ReadDapp.Response>(ReadDapp.Path(dappName), ReadDapp.HTTP)()
-    }
-  }
+  list = this.builder.argFactory<ListDapps.Args, ListDapps.Response>(ListDapps.Path, ListDapps.HTTP);
 }
 
 export default PrivateAPI;

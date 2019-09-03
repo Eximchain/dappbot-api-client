@@ -2,105 +2,46 @@ import { RootResources } from '@eximchain/dappbot-types/spec/methods';
 import User from '@eximchain/dappbot-types/spec/user';
 import Response from '@eximchain/dappbot-types/spec/responses';
 import { AuthSetter } from "../types";
-import { request as resourceRequest } from 'react-request-hook';
+import { request as resourceRequest, useResource } from 'react-request-hook';
 import request from 'request-promise-native';
 import AuthAPI from './auth';
 import PrivateAPI from './private';
 import PaymentAPI from './payment';
+import PublicAPI from './public';
+import RequestBuilder from '../requestBuilder';
+import omit from 'lodash.omit';
+
 import {
-  Headers, ReqTypes
+  APIConfig, APIModuleArgs
 } from '../types';
-
-
-export interface APIConfig {
-  dappbotUrl: string
-  authData: User.AuthData
-  setAuthData: AuthSetter
-}
-
-export interface RefreshOptions {
-  userMustRetry : boolean
-}
 
 export class API {
   constructor(args:APIConfig){
-    const { authData, setAuthData, dappbotUrl } = args;
-    this.dappbotUrl = dappbotUrl;
-    this.authData = authData;
-    this.setAuthData = setAuthData;
-    this.auth = new AuthAPI(authData, setAuthData, this.resourceFactory, this.requestFactory);
-    this.private = new PrivateAPI(authData, setAuthData, this.resourceFactory, this.requestFactory);
-    this.payment = new PaymentAPI(authData, setAuthData, this.resourceFactory, this.requestFactory);
+    this.dappbotUrl = args.dappbotUrl;
+    this.authData = args.authData;
+    this.setAuthData = args.setAuthData;
+
+    this.builder = new RequestBuilder({
+      dappbotUrl : args.dappbotUrl,
+      authData : args.authData
+    })
+    const moduleArgs:APIModuleArgs = {
+      builder : this.builder
+    }
+    this.auth = new AuthAPI(moduleArgs);
+    this.payment = new PaymentAPI(moduleArgs);
+    this.private = new PrivateAPI(moduleArgs);
+    this.public = new PublicAPI(moduleArgs);
   }
 
   dappbotUrl:string
   authData:User.AuthData
   setAuthData:AuthSetter
+  builder:RequestBuilder
   auth:AuthAPI
-  private:PrivateAPI
   payment:PaymentAPI
-
-  // Instruments the `requestFactory` to specifically return
-  // react-request-hook resources, specifically declaring
-  // the return value of the resource.  The generic args
-  // alow you to specify both the inputs and outputs of the
-  // request.
-  resourceFactory<Args, Returns>(path:string, method:Response.HttpMethods) {
-    return (args:Args) => resourceRequest<Returns>(this.requestFactory(path, method)(args))
-  }
-
-  buildFullPath(path:string) { return `${this.dappbotUrl}/${path}`}
-
-  buildHeaders(path:string) {
-    let privateResources = [RootResources.private, RootResources.public];
-    function pathIncludes(name:string){ return path.indexOf(name) >= 0 }
-    const headers:Headers = {
-      'Content-Type': 'application/json'
-    }
-    if (privateResources.some(pathIncludes) && this.authData) {
-      headers.Authorization = this.authData.Authorization;
-    }
-    return headers;
-  }
-
-  baseObject(path:string, method:Response.HttpMethods):ReqTypes.base {
-    return {
-      method : method,
-      headers : this.buildHeaders(path)
-    }
-  }
-
-  axiosObject<Args>(path:string, method:Response.HttpMethods, args:Args):ReqTypes.axios<Args> {
-    return Object.assign(
-      this.baseObject(path, method), 
-      { 
-        data : args,
-        url : this.buildFullPath(path)
-      }
-    );
-  }
-
-  requestObject<Args>(path:string, method:Response.HttpMethods, args:Args):ReqTypes.request<Args> {
-    return Object.assign(
-      this.baseObject(path, method), 
-      { 
-        json : args,
-        url : path
-      }
-    );
-  }
-
-  // The <Data> declares a generic type, which represents the request
-  // data.  The returned function takes an argument of the same type
-  // as <Data>, so calls to `authorizedRequestFactory` simply need to
-  // provide a sample `data` in order to get a properly typed request fxn.
-  // The objects returned by `requestFactory` can be given to any
-  // fetch library. Defining the helpers within this same function so
-  // that the fxns are still available when these methods get copied
-  // onto child API's `this` values.
-  requestFactory<Args>(path:string, method:Response.HttpMethods) {
-    return (args:Args) => this.axiosObject<Args>(path, method, args);
-  }
+  private:PrivateAPI
+  public:PublicAPI
 
   /**
    * Checks the ExpiresAt field to see if the Authorization
@@ -113,7 +54,7 @@ export class API {
    * alert ask the user to repeat their action, in case
    * it was triggered by a button press.
    */
-  async refreshAuthorization(opts:RefreshOptions={userMustRetry : false}){
+  async refreshAuthorization(){
     const { authData: user } = this;
 
     if (user.RefreshToken === '' || user.ExpiresAt === ''){
@@ -127,7 +68,7 @@ export class API {
     if (stillFresh) {
       return this;
     } else {
-      return await this.refreshUser(opts)
+      return await this.refreshUser()
     }
   }
 
@@ -135,28 +76,28 @@ export class API {
    * Refreshes the full user object, updating each 
    * parameter except for RefreshToken.
    */
-  async refreshUser(opts:RefreshOptions={userMustRetry : false}){
-    const { authData: user, setAuthData: setUser, dappbotUrl } = this;
-    if (!user.RefreshToken) throw new Error("Please log in.");
-    const refreshRequest = this.auth.refresh()({
-      refreshToken : user.RefreshToken
+  async refreshUser(){
+    const { authData, setAuthData, dappbotUrl } = this;
+    if (!authData.RefreshToken) throw new Error("Please log in.");
+    const refreshRequest = this.auth.refresh.request({
+      refreshToken : authData.RefreshToken
     });
     try {
       const refreshResult = await request(refreshRequest);
       const RefreshedUser:User.AuthData = refreshResult.data;
       // Use the assign because RefreshedUser doesn't have
       // the RefreshToken on it.
-      const NewUser = Object.assign({ RefreshToken : user.RefreshToken }, RefreshedUser);
-      setUser(NewUser)
+      const NewUser = Object.assign({ RefreshToken : authData.RefreshToken }, RefreshedUser);
+      setAuthData(NewUser)
       // Alert.info(opts.userMustRetry ?
       //   'We just refreshed your authorization to our server, please try that again.' :
       //   'We just refreshed your authorization to our server, one moment...');
       return new API({
         authData : NewUser,
-        setAuthData: setUser, dappbotUrl
+        setAuthData, dappbotUrl
       })
     } catch (err) {
-      setUser(User.emptyAuthData());
+      setAuthData(User.emptyAuthData());
       throw new Error("Unable to refresh your session, please log in again.");
     }
   }

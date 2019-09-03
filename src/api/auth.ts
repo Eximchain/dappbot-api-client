@@ -1,60 +1,26 @@
 import { 
   Login, NewPassChallenge, Refresh , BeginPassReset, ConfirmPassReset
 } from '@eximchain/dappbot-types/spec/methods/auth';
-import { User, Response } from '@eximchain/dappbot-types';
-import { AuthSetter } from '../types';
-import { 
-  RequestFactory, ResourceFactory, PathBuilder
-} from '../types'
+import { APIModuleArgs } from '../types'
+import RequestBuilder from '../requestBuilder';
 
 const passwordValidator = require('password-validator');
 
 export class AuthAPI {
-  constructor(
-    user:User.AuthData, 
-    setUser:AuthSetter, 
-    resourceFactory:ResourceFactory, 
-    requestFactory:RequestFactory
-  ){
-    this.user = user;
-    this.setUser = setUser;
-    this.requestFactory = requestFactory;
-    this.resourceFactory = resourceFactory;
+  constructor({ builder }:APIModuleArgs){
+    this.builder = builder;
   }
-  user:User.AuthData
-  setUser:AuthSetter
-  resourceFactory:ResourceFactory
-  requestFactory:RequestFactory
+  builder:RequestBuilder
 
-  signIn(){
-    return this.resourceFactory<Login.Args, Login.Response>(Login.Path, Login.HTTP)
-  }
+  signIn = this.builder.argFactory<Login.Args, Login.Response>(Login.Path, Login.HTTP)
   
-  newPassword(){
-    return this.resourceFactory<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
-  }
+  newPassword = this.builder.argFactory<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
   
-  refresh(){
-    return (args:Refresh.Args) => {
-      // This function is a *requestFactory* because we just want the config object,
-      // doing our request directly.  
-      let refreshRequest = this.requestFactory<Refresh.Args>(Refresh.Path, Refresh.HTTP)(args);
+  refresh = this.builder.argFactory<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
+  
+  beginPasswordReset =  this.builder.argFactory<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
 
-      // @ts-ignore The `.data` field is copied to `.json`, because
-      // that's where `request` expects to find it. Don't tell
-      // Typescript though, it'll get angry.
-      refreshRequest.json = refreshRequest.data;
-      return refreshRequest
-    }
-  }
-  
-  beginPasswordReset() {
-    return this.resourceFactory<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
-  }
-  
-  confirmPasswordReset() {
-    return this.resourceFactory<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
-  }
+  confirmPasswordReset = this.builder.argFactory<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
 }
 
 export const passwordChecker = new passwordValidator();

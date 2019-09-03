@@ -1,10 +1,8 @@
 import { Resource } from 'react-request-hook';
 import User from '@eximchain/dappbot-types/spec/user';
-import { RootResources } from '@eximchain/dappbot-types/spec/methods';
 import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
-import { Request as FetchRequest } from 'node-fetch';
-
-export type AuthSetter = (newUser:User.AuthData) => void
+import { RequestInfo as FetchRequest } from 'node-fetch';
+import RequestBuilder from '../requestBuilder';
 
 export interface Headers {
   'Content-Type': string,
@@ -30,7 +28,22 @@ export namespace ReqTypes {
   export type fetch = FetchRequest;
 }
 
-export type PathBuilder = (suffix:string)=>string
+export type AuthSetter = (newUser:User.AuthData) => void
 
-export type RequestFactory = <Args>(path:string, method:HttpMethods) => (args: Args) => ReqTypes.axios
-export type ResourceFactory = <Args, Returns>(path:string, method:HttpMethods) => (args: Args) => Resource<Returns>
+export interface APIConfig {
+  dappbotUrl: string
+  authData: User.AuthData
+  setAuthData: AuthSetter
+}
+
+export interface APIModuleArgs {
+  builder : RequestBuilder
+}
+
+
+export interface CallFactory<Args, Returns> {
+  axios : (args:Args) => ReqTypes.axios<Args>
+  resource : (args:Args) => Resource<Returns>
+  request : (args:Args) => ReqTypes.request<Args>
+  fetch : (args:Args) => ReqTypes.fetch
+}
