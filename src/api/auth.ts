@@ -10,7 +10,7 @@ export class AuthAPI {
   constructor({ builder }:APIModuleArgs){
     this.builder = builder;
   }
-  builder:RequestBuilder
+  private builder:RequestBuilder
 
   signIn = this.builder.argFactory<Login.Args, Login.Response>(Login.Path, Login.HTTP)
   

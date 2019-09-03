@@ -6,7 +6,7 @@ export class PrivateAPI {
   constructor({ builder }:APIModuleArgs){
     this.builder = builder;
   }
-  builder:RequestBuilder
+  private builder:RequestBuilder
 
   create = this.builder.argAndPathFactory<CreateDapp.Args, CreateDapp.Response>(CreateDapp.Path, CreateDapp.HTTP);
 

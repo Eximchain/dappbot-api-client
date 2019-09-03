@@ -10,7 +10,7 @@ export class PublicAPI {
   constructor({ builder }:APIModuleArgs){
     this.builder = builder;
   }
-  builder:RequestBuilder
+  private builder:RequestBuilder
 
   view = {
     axios : (DappName:string) => this.builder.axiosConf<ViewDapp.Args>(ViewDapp.Path(DappName), ViewDapp.HTTP, undefined),

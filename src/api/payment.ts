@@ -6,7 +6,7 @@ export class PaymentAPI {
   constructor({ builder }:APIModuleArgs){
     this.builder = builder;
   }
-  builder:RequestBuilder
+  private builder:RequestBuilder
 
   signUp = this.builder.argFactory<SignUp.Args, SignUp.Response>(SignUp.Path, SignUp.HTTP);
 
