@@ -54,11 +54,7 @@ export class API {
       throw new Error("Please log in.")
     }
 
-    let stillFresh = true;
-    // TODO: Write a bespoke fxn for this, as it's the only
-    // time op in the whole API
-    // stillFresh = moment(user.ExpiresAt).isAfter(moment.now());
-    if (stillFresh) {
+    if (Date.now() < Date.parse(user.ExpiresAt)) {
       return this;
     } else {
       return await this.refreshUser()
@@ -82,9 +78,6 @@ export class API {
       // the RefreshToken on it.
       const NewUser = Object.assign({ RefreshToken : authData.RefreshToken }, RefreshedUser);
       setAuthData(NewUser)
-      // Alert.info(opts.userMustRetry ?
-      //   'We just refreshed your authorization to our server, please try that again.' :
-      //   'We just refreshed your authorization to our server, one moment...');
       return new API({
         authData : NewUser,
         setAuthData, dappbotUrl
