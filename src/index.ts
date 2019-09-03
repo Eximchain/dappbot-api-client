@@ -8,6 +8,14 @@ import {
   APIConfig, APIModuleArgs
 } from './types';
 
+/**
+ * Overall DappBot API client class.  Must be instantiated
+ * with constructor in order to configure the base URL
+ * and authentication info.
+ * 
+ * The user of the client is expected to maintain their own
+ * storage for the `authData`, and to provide a setter.
+ */
 export class API {
   constructor(args:APIConfig){
     this.dappbotUrl = args.dappbotUrl;
@@ -27,13 +35,30 @@ export class API {
     this.public = new PublicAPI(moduleArgs);
   }
 
-  dappbotUrl:string
-  authData:User.AuthData
-  setAuthData:AuthSetter
-  builder:RequestBuilder
+  private dappbotUrl:string
+  private authData:User.AuthData
+  private setAuthData:AuthSetter
+  private builder:RequestBuilder
+
+
+  /**
+   * API submodule containing all `auth` methods.
+   */
   auth:AuthAPI
+
+  /**
+   * API submodule containing all `payment` methods.
+   */
   payment:PaymentAPI
+
+  /**
+   * API submodule containing all `private` methods.
+   */
   private:PrivateAPI
+
+  /**
+   * API submodule containing all `public` methods.
+   */
   public:PublicAPI
 
   /**
@@ -42,10 +67,6 @@ export class API {
    * if necessary.  Returns a new API object if the user
    * was updated, returns self if nothing changed, throws
    * an error if something goes wrong in the process.
-   * 
-   * Options arg let the caller request that the refresh
-   * alert ask the user to repeat their action, in case
-   * it was triggered by a button press.
    */
   async refreshAuthorization(){
     const { authData: user } = this;

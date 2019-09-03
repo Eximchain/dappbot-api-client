@@ -1,26 +1,48 @@
-import { 
-  Login, NewPassChallenge, Refresh , BeginPassReset, ConfirmPassReset
+import {
+  Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset
 } from '@eximchain/dappbot-types/spec/methods/auth';
 import { APIModuleArgs } from '../types'
 import RequestBuilder from '../requestBuilder';
 
 const passwordValidator = require('password-validator');
 
+/**
+ * Collection of all methods available under the `auth` resource.
+ */
 export class AuthAPI {
-  constructor({ builder }:APIModuleArgs){
+  constructor({ builder }: APIModuleArgs) {
     this.builder = builder;
   }
-  private builder:RequestBuilder
+  private builder: RequestBuilder
 
-  signIn = this.builder.argFactory<Login.Args, Login.Response>(Login.Path, Login.HTTP)
-  
-  newPassword = this.builder.argFactory<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
-  
-  refresh = this.builder.argFactory<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
-  
-  beginPasswordReset =  this.builder.argFactory<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
+  /**
+   * ReqFactory: Log into DappBot.
+   */
+  signIn = this.builder.reqFactoryWithArgs<Login.Args, Login.Response>(Login.Path, Login.HTTP)
 
-  confirmPasswordReset = this.builder.argFactory<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
+
+  /**
+   * ReqFactory: Set a new password after account creation.
+   */
+  newPassword = this.builder.reqFactoryWithArgs<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
+
+
+  /**
+   * ReqFactory: Refresh a user's authentication with DappBot.
+   */
+  refresh = this.builder.reqFactoryWithArgs<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
+
+
+  /**
+   * ReqFactory: Begin a password reset.
+   */
+  beginPasswordReset = this.builder.reqFactoryWithArgs<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
+
+  
+  /**
+   * ReqFactory: Confirm a password reset.
+   */
+  confirmPasswordReset = this.builder.reqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
 }
 
 export const passwordChecker = new passwordValidator();

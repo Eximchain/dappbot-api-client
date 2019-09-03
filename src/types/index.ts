@@ -40,10 +40,16 @@ export interface APIModuleArgs {
   builder : RequestBuilder
 }
 
-
-export interface CallFactory<Args, Returns> {
-  axios : (args:Args) => ReqTypes.axios<Args>
+export interface ReqFactoryWithArgs<Args, Returns> {
   resource : (args:Args) => Resource<Returns>
+  axios : (args:Args) => ReqTypes.axios<Args>
   request : (args:Args) => ReqTypes.request<Args>
   fetch : (args:Args) => ReqTypes.fetch
+}
+
+export interface ReqFactoryWithArgsAndPath<Args, Returns> {
+  resource : (DappName:string, args:Args) => Resource<Returns>
+  axios : (DappName:string, args:Args) => ReqTypes.axios<Args>
+  request : (DappName:string, args:Args) => ReqTypes.request<Args>
+  fetch : (DappName:string, args:Args) => ReqTypes.fetch
 }

@@ -1,6 +1,6 @@
 {
   "name": "dappbot-api-client",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Client for the DappBot API",
   "main": "dist/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/Eximchain/dappbot-api-client#readme",
   "dependencies": {
-    "@eximchain/dappbot-types": "file:../dappbot-types",
+    "@eximchain/dappbot-types": "^1.0.3",
     "@types/lodash.omit": "^4.5.6",
     "@types/node-fetch": "^2.5.0",
     "@types/request-promise-native": "^1.0.16",
