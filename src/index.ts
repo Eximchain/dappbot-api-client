@@ -68,27 +68,26 @@ export class API {
    * was updated, returns self if nothing changed, throws
    * an error if something goes wrong in the process.
    */
-  async refreshAuthorization(){
-    const { authData: user } = this;
-
-    if (user.RefreshToken === '' || user.ExpiresAt === ''){
+  async refreshAuth(){
+    if (this.hasNoAuth()){
       throw new Error("Please log in.")
     }
 
-    if (Date.now() < Date.parse(user.ExpiresAt)) {
-      return this;
-    } else {
-      return await this.refreshUser()
+    if (this.hasStaleAuth()){
+      return await this.loginViaRefresh();
     }
+
+    return this;
   }
 
   /**
    * Refreshes the full user object, updating each 
-   * parameter except for RefreshToken.
+   * parameter except for RefreshToken, which remains
+   * constant for the life of the session.
    */
-  async refreshUser(){
+  async loginViaRefresh(){
     const { authData, setAuthData, dappbotUrl } = this;
-    if (!authData.RefreshToken) throw new Error("Please log in.");
+    if (this.hasNoAuth()) throw new Error("Please log in.");
     const refreshRequest = this.auth.refresh.request({
       refreshToken : authData.RefreshToken
     });
@@ -107,6 +106,38 @@ export class API {
       setAuthData(User.emptyAuthData());
       throw new Error("Unable to refresh your session, please log in again.");
     }
+  }
+
+  /**
+   * Helper to check the API's authData: only
+   * `true` if the authData is both non-null
+   * and not stale.
+   */
+  hasActiveAuth():boolean {
+    return !this.hasNoAuth() && !this.hasStaleAuth();
+  }
+
+  /**
+   * Helper to check the API's authData: only
+   * `true` if we have non-null authData whose
+   * `ExpiresAt` value says that it is stale.
+   */
+  hasStaleAuth():boolean {
+    if (this.hasNoAuth()) return false;
+    return Date.now() > Date.parse(this.authData.ExpiresAt)
+  }
+
+  /**
+   * Helper to check the API's authData: only
+   * `true` if the authData has null values,
+   * meaning that a fresh login is required.
+   */
+  hasNoAuth():boolean {
+    return (
+      Date.parse(this.authData.ExpiresAt) === NaN ||
+      this.authData.RefreshToken === '' || 
+      this.authData.Authorization === ''
+    )
   }
 }
 

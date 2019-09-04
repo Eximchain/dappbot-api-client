@@ -18,7 +18,7 @@ export class AuthAPI {
   /**
    * ReqFactory: Log into DappBot.
    */
-  signIn = this.builder.reqFactoryWithArgs<Login.Args, Login.Response>(Login.Path, Login.HTTP)
+  login = this.builder.reqFactoryWithArgs<Login.Args, Login.Response>(Login.Path, Login.HTTP)
 
 
   /**
