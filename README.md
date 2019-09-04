@@ -66,13 +66,14 @@ Each method is mounted within its root resource, for instance:
 - Login request: `API.auth.login`
 - Create dapp request: `API.private.create`
 
-The methods then all provide different factory functions depending on which request solution you're using:
-
-TODO: Explain
-- Methods are synchronous
-- They just return objects w/ appropriate config
+The methods then all provide different factory functions depending on which request solution you're using.  These methods synchronously return fully configured request objects, including a fully scoped path, headers with `Authorization` if necessary, and a properly formatted body.  Note that the methods do not actually perform the request, they just produce the appropriate object for the request solution you're using:
 
 ```typescript
+import { useResource } from 'react-request-hook';
+import request from 'request-promise-native';
+import fetch from 'node-fetch';
+import axios from 'axios';
+
 const creds = {
   username : 'testing@example.com',
   password : 'secret-from-user'
@@ -224,7 +225,7 @@ export function DappListFetcher({ API }:FetcherProps) {
         // which will trigger updating the authData and getting
         // a new API object.
         //
-        // You don't need to do anything here, the follow-on
+        // You don't need to do anything else here, the follow-on
         // request with valid auth data is triggered by the
         // effect below.  If you'd like, maybe inform your 
         // user that their session is being refreshed.
