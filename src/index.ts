@@ -1,4 +1,5 @@
 import User from '@eximchain/dappbot-types/spec/user';
+import { Login } from '@eximchain/dappbot-types/spec/methods/auth';
 import { AuthSetter } from "./types";
 import request from 'request-promise-native';
 import { AuthAPI, PaymentAPI, PrivateAPI, PublicAPI } from './api';
@@ -81,9 +82,9 @@ export class API {
   }
 
   /**
-   * Refreshes the full user object, updating each 
-   * parameter except for RefreshToken, which remains
-   * constant for the life of the session.
+   * Convenience method which refreshes the full user 
+   * object, updating each parameter except for RefreshToken, 
+   * which remains constant for the life of the session.
    */
   async loginViaRefresh(){
     const { authData, setAuthData, dappbotUrl } = this;
@@ -103,7 +104,7 @@ export class API {
         setAuthData, dappbotUrl
       })
     } catch (err) {
-      setAuthData(User.emptyAuthData());
+      setAuthData(User.newAuthData());
       throw new Error("Unable to refresh your session, please log in again.");
     }
   }

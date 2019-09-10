@@ -1,4 +1,4 @@
-import {
+import Auth, {
   Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset
 } from '@eximchain/dappbot-types/spec/methods/auth';
 import { APIModuleArgs } from '../types'

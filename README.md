@@ -38,20 +38,22 @@ We let the consumer handle storing that data in order to be compatible with more
 
 ```typescript
 import React, { FunctionComponent, useState } from 'react';
+
 import DappbotAPI from '@eximchain/dappbot-api-client';
-import User from '@eximchain/dappbot-types/spec/user';
-import AppBody from './components/AppBody';
+import DappbotUser from '@eximchain/dappbot-types/spec/user';
+
+import DappBody from './components/DappBody';
 
 export function APIProvider(props){
   // Use the helper from our types package to get the initial auth
   // state so Typescript correctly interprets the generic type.
-  const [authData, setAuthData] = useState(User.emptyAuthData());
+  const [dappbotAuth, setDappbotAuth] = useState(DappbotUser.newAuthData());
   const API = new DappbotAPI({
     dappbotUrl : 'https://api.dapp.bot',
-    authData : authData,
-    setAuthData : setAuthData
+    authData : dappbotAuth,
+    setAuthData : setDappbotAuth
   })
-  return <AppBody API={API} />
+  return <DappBody API={API} />
 }
 
 export default APIProvider;

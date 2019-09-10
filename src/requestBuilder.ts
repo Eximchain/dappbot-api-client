@@ -1,7 +1,7 @@
 import { Request as FetchRequest, RequestInfo } from 'node-fetch';
 import { request as resourceRequest } from 'react-request-hook';
 import { AuthData } from '@eximchain/dappbot-types/spec/user';
-import Response from '@eximchain/dappbot-types/spec/responses';
+import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
 import { RootResources } from '@eximchain/dappbot-types/spec/methods';
 import { Headers, ReqTypes, ReqFactoryWithArgs, ReqFactoryWithArgsAndPath } from './types';
 
@@ -33,7 +33,7 @@ export class RequestBuilder {
    * @param method 
    */
   reqFactoryWithArgs<Args, Returns>(
-    path:string, method:Response.HttpMethods
+    path:string, method:HttpMethods.ANY
   ):ReqFactoryWithArgs<Args, Returns> {
     return {
       resource : (args:Args) => this.resourceConf<Args, Returns>(path, method, args),
@@ -57,7 +57,7 @@ export class RequestBuilder {
    * @param method 
    */
   reqFactoryWithArgsAndPath<Args, Returns>(
-    path:(suffix:string)=>string, method:Response.HttpMethods
+    path:(suffix:string)=>string, method:HttpMethods.ANY
   ):ReqFactoryWithArgsAndPath<Args, Returns> {
     return {
       resource : (DappName:string, args:Args) => this.resourceConf<Args, Returns>(path(DappName), method, args),
@@ -74,7 +74,7 @@ export class RequestBuilder {
    * @param path 
    * @param method 
    */
-  private baseConf(path: string, method: Response.HttpMethods): ReqTypes.base {
+  private baseConf(path: string, method: HttpMethods.ANY): ReqTypes.base {
     return {
       method: method,
       headers: this.buildHeaders(path)
@@ -115,7 +115,7 @@ export class RequestBuilder {
    * @param method 
    * @param args 
    */
-  axiosConf<Args>(path: string, method: Response.HttpMethods, args: Args): ReqTypes.axios<Args> {
+  axiosConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.axios<Args> {
     return Object.assign(
       this.baseConf(path, method),
       {
@@ -135,7 +135,7 @@ export class RequestBuilder {
    * @param method 
    * @param args 
    */
-  resourceConf<Args, Returns>(path:string, method:Response.HttpMethods, args:Args) {
+  resourceConf<Args, Returns>(path:string, method:HttpMethods.ANY, args:Args) {
     return resourceRequest<Returns>(this.axiosConf(path, method, args))
   }
 
@@ -146,7 +146,7 @@ export class RequestBuilder {
    * @param method 
    * @param args 
    */
-  requestConf<Args>(path: string, method: Response.HttpMethods, args: Args): ReqTypes.request<Args> {
+  requestConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.request<Args> {
     return Object.assign(
       this.baseConf(path, method),
       {
@@ -163,7 +163,7 @@ export class RequestBuilder {
    * @param method 
    * @param args 
    */
-  fetchConf<Args>(path: string, method: Response.HttpMethods, args: Args): ReqTypes.fetch {
+  fetchConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.fetch {
     return new FetchRequest(this.buildFullPath(path), Object.assign(
       this.baseConf(path, method),
       { body: JSON.stringify(args) }
