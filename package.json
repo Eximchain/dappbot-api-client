@@ -1,6 +1,6 @@
 {
   "name": "@eximchain/dappbot-api-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Typescript client for the DappBot API",
   "main": "dist/index.js",
   "types": "src/index.ts",
@@ -17,13 +17,13 @@
     "dappbot"
   ],
   "author": "John O'Sullivan <john@eximchain.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Eximchain/dappbot-api-client/issues"
   },
   "homepage": "https://github.com/Eximchain/dappbot-api-client#readme",
   "dependencies": {
-    "@eximchain/dappbot-types": "^1.1.7",
+    "@eximchain/dappbot-types": "^1.2.4",
     "@types/axios": "^0.14.0",
     "@types/lodash.omit": "^4.5.6",
     "@types/node-fetch": "^2.5.0",

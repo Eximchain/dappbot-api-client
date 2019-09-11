@@ -1,5 +1,5 @@
 import { ViewDapp } from '@eximchain/dappbot-types/spec/methods/public';
-import { APIModuleArgs } from '../types';
+import { APIModuleArgs, ReqFactoryWithArgsAndPath } from '../types';
 import RequestBuilder from '../requestBuilder';
 
 /**
@@ -8,6 +8,11 @@ import RequestBuilder from '../requestBuilder';
 export class PublicAPI {
   constructor({ builder }:APIModuleArgs){
     this.builder = builder;
+
+    // These functions are assigned in the constructor because
+    // the builder requires arguments which are provided when
+    // the overall class is instantiated.
+    this.viewDapp = this.builder.reqFactoryWithArgsAndPath<ViewDapp.Args, ViewDapp.Response>(ViewDapp.Path, ViewDapp.HTTP);
   }
   private builder:RequestBuilder
 
@@ -16,7 +21,7 @@ export class PublicAPI {
    * ReqFactory: Get the `Item.Core` repesentation of any Dapp,
    * sufficient information required to render within `DappHub`.
    */
-  view = this.builder.reqFactoryWithArgsAndPath<ViewDapp.Args, ViewDapp.Response>(ViewDapp.Path, ViewDapp.HTTP);
+  public viewDapp: ReqFactoryWithArgsAndPath<ViewDapp.Args, ViewDapp.Response>
 }
 
 export default PublicAPI;

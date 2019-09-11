@@ -1,7 +1,7 @@
 import Auth, {
   Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset
 } from '@eximchain/dappbot-types/spec/methods/auth';
-import { APIModuleArgs } from '../types'
+import { APIModuleArgs, ReqFactoryWithArgs } from '../types'
 import RequestBuilder from '../requestBuilder';
 
 const passwordValidator = require('password-validator');
@@ -11,38 +11,44 @@ const passwordValidator = require('password-validator');
  */
 export class AuthAPI {
   constructor({ builder }: APIModuleArgs) {
-    this.builder = builder;
+    this.builder              = builder;
+
+    // These functions are assigned in the constructor because
+    // the builder requires arguments which are provided when
+    // the overall class is instantiated.
+    this.login                = this.builder.reqFactoryWithArgs<Login.Args, Login.Response>(Login.Path, Login.HTTP)
+    this.newPassword          = this.builder.reqFactoryWithArgs<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
+    this.refresh              = this.builder.reqFactoryWithArgs<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
+    this.beginPasswordReset   = this.builder.reqFactoryWithArgs<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
+    this.confirmPasswordReset = this.builder.reqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
   }
+
   private builder: RequestBuilder
 
   /**
    * ReqFactory: Log into DappBot.
    */
-  login = this.builder.reqFactoryWithArgs<Login.Args, Login.Response>(Login.Path, Login.HTTP)
-
+  public login: ReqFactoryWithArgs<Login.Args, Login.Response>
 
   /**
    * ReqFactory: Set a new password after account creation.
    */
-  newPassword = this.builder.reqFactoryWithArgs<NewPassChallenge.Args, NewPassChallenge.Response>(NewPassChallenge.Path, NewPassChallenge.HTTP);
-
-
+  public newPassword: ReqFactoryWithArgs<NewPassChallenge.Args, NewPassChallenge.Response>
+  
   /**
    * ReqFactory: Refresh a user's authentication with DappBot.
    */
-  refresh = this.builder.reqFactoryWithArgs<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
-
+  public refresh: ReqFactoryWithArgs<Refresh.Args, Refresh.Response>
 
   /**
    * ReqFactory: Begin a password reset.
    */
-  beginPasswordReset = this.builder.reqFactoryWithArgs<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
+  public beginPasswordReset: ReqFactoryWithArgs<BeginPassReset.Args, BeginPassReset.Response>;
 
-  
   /**
    * ReqFactory: Confirm a password reset.
    */
-  confirmPasswordReset = this.builder.reqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
+  public confirmPasswordReset: ReqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>;
 }
 
 export const passwordChecker = new passwordValidator();

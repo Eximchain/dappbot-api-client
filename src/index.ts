@@ -71,7 +71,7 @@ export class API {
    */
   async refreshAuth(){
     if (this.hasNoAuth()){
-      throw new Error("Please log in.")
+      console.error("Please log in.");
     }
 
     if (this.hasStaleAuth()){
@@ -88,7 +88,10 @@ export class API {
    */
   async loginViaRefresh(){
     const { authData, setAuthData, dappbotUrl } = this;
-    if (this.hasNoAuth()) throw new Error("Please log in.");
+    if (this.hasNoAuth()) {
+      console.error("Please log in.");
+      return this;
+    }
     const refreshRequest = this.auth.refresh.request({
       refreshToken : authData.RefreshToken
     });
@@ -105,7 +108,7 @@ export class API {
       })
     } catch (err) {
       setAuthData(User.newAuthData());
-      throw new Error("Unable to refresh your session, please log in again.");
+      console.error("Unable to refresh your session, please log in again.");
     }
   }
 
@@ -125,7 +128,8 @@ export class API {
    */
   hasStaleAuth():boolean {
     if (this.hasNoAuth()) return false;
-    return Date.now() > Date.parse(this.authData.ExpiresAt)
+    let expiryDate = Date.parse(this.authData.ExpiresAt);
+    return expiryDate !== NaN && Date.now() > expiryDate;
   }
 
   /**
@@ -135,7 +139,6 @@ export class API {
    */
   hasNoAuth():boolean {
     return (
-      Date.parse(this.authData.ExpiresAt) === NaN ||
       this.authData.RefreshToken === '' || 
       this.authData.Authorization === ''
     )

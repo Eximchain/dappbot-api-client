@@ -4,11 +4,13 @@ import { AuthData } from '@eximchain/dappbot-types/spec/user';
 import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
 import { RootResources } from '@eximchain/dappbot-types/spec/methods';
 import { Headers, ReqTypes, ReqFactoryWithArgs, ReqFactoryWithArgsAndPath } from './types';
+const url = require('url')
 
 export interface RequestBuilderConfig {
   dappbotUrl: string
   authData: AuthData
 }
+
 export class RequestBuilder {
   constructor({ dappbotUrl, authData }: RequestBuilderConfig) {
     this.authData = authData;
@@ -32,7 +34,7 @@ export class RequestBuilder {
    * @param path A fixed string, as the path does not change per request
    * @param method 
    */
-  reqFactoryWithArgs<Args, Returns>(
+  public reqFactoryWithArgs<Args, Returns>(
     path:string, method:HttpMethods.ANY
   ):ReqFactoryWithArgs<Args, Returns> {
     return {
@@ -56,7 +58,7 @@ export class RequestBuilder {
    * @param path A function which produces the full path given the variable
    * @param method 
    */
-  reqFactoryWithArgsAndPath<Args, Returns>(
+  public reqFactoryWithArgsAndPath<Args, Returns>(
     path:(suffix:string)=>string, method:HttpMethods.ANY
   ):ReqFactoryWithArgsAndPath<Args, Returns> {
     return {
@@ -74,10 +76,10 @@ export class RequestBuilder {
    * @param path 
    * @param method 
    */
-  private baseConf(path: string, method: HttpMethods.ANY): ReqTypes.base {
+  private baseConf(method: HttpMethods.ANY): ReqTypes.base {
     return {
       method: method,
-      headers: this.buildHeaders(path)
+      headers: this.buildHeaders()
     }
   }
 
@@ -87,7 +89,7 @@ export class RequestBuilder {
    * DappBot API url.
    * @param path 
    */
-  buildFullPath(path: string) { return `${this.dappbotUrl}/${path}` }
+  buildFullPath(path: string) { return url.format(url.resolve(this.dappbotUrl, path)) }
 
   /**
    * Given a path string, returns an object with required headers to call
@@ -96,13 +98,11 @@ export class RequestBuilder {
    * always set.
    * @param path 
    */
-  buildHeaders(path: string) {
-    let privateResources = [RootResources.private, RootResources.payment];
-    function pathIncludes(name: string) { return path.indexOf(name) >= 0 }
+  buildHeaders() {
     const headers: Headers = {
       'Content-Type': 'application/json'
     }
-    if (privateResources.some(pathIncludes) && this.authData) {
+    if (this.authData.Authorization !== '') {
       headers.Authorization = this.authData.Authorization;
     }
     return headers;
@@ -117,7 +117,7 @@ export class RequestBuilder {
    */
   axiosConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.axios<Args> {
     return Object.assign(
-      this.baseConf(path, method),
+      this.baseConf(method),
       {
         data: args,
         url: this.buildFullPath(path)
@@ -148,10 +148,10 @@ export class RequestBuilder {
    */
   requestConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.request<Args> {
     return Object.assign(
-      this.baseConf(path, method),
+      this.baseConf(method),
       {
         json: args,
-        url: path
+        url: this.buildFullPath(path)
       }
     );
   }
@@ -165,7 +165,7 @@ export class RequestBuilder {
    */
   fetchConf<Args>(path: string, method: HttpMethods.ANY, args: Args): ReqTypes.fetch {
     return new FetchRequest(this.buildFullPath(path), Object.assign(
-      this.baseConf(path, method),
+      this.baseConf(method),
       { body: JSON.stringify(args) }
     ));
   }
