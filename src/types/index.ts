@@ -12,7 +12,7 @@ export interface Headers {
 export namespace ReqTypes {
   export interface base {
     headers: Headers
-    method: HttpMethods
+    method: HttpMethods.ANY
   }
 
   export interface request<Args=any> extends base {

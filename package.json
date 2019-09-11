@@ -1,7 +1,7 @@
 {
   "name": "@eximchain/dappbot-api-client",
   "version": "1.0.0",
-  "description": "Client for the DappBot API",
+  "description": "Typescript client for the DappBot API",
   "main": "dist/index.js",
   "types": "src/index.ts",
   "scripts": {
