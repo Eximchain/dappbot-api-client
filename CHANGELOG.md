@@ -1,3 +1,6 @@
+# v1.1.0
+Upgraded `requestBuilder`'s `reqFactory` methods to include a fifth key, `call()`.  While the previous four keys just return the configuration objects for various request libraries, the new `call()` function uses `request-promise-native` to actually perform the request and return `Promise<Response>`.  This is ideal for small apps which are mostly just consuming DappBot data.
+
 # v1.0.1
 Fixed a number of runtime bugs which appeared when plugging this library into our web client.
 - Per-root api classes were trying to call `this.builder` before its value had been assigned in the constructor.  Now all of their bodies just declare typed properties, while the actual assignment happens in the constructor.

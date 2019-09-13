@@ -1,4 +1,5 @@
-import { Request as FetchRequest, RequestInfo } from 'node-fetch';
+import { Request as FetchRequest } from 'node-fetch';
+import request from 'request-promise-native';
 import { request as resourceRequest } from 'react-request-hook';
 import { AuthData } from '@eximchain/dappbot-types/spec/user';
 import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
@@ -41,7 +42,8 @@ export class RequestBuilder {
       resource : (args:Args) => this.resourceConf<Args, Returns>(path, method, args),
       axios : (args:Args) => this.axiosConf<Args>(path, method, args),
       request : (args:Args) => this.requestConf<Args>(path, method, args),
-      fetch : (args:Args) => this.fetchConf<Args>(path, method, args)
+      fetch : (args:Args) => this.fetchConf<Args>(path, method, args),
+      call : async (args:Args):Promise<Returns> => await request(this.requestConf<Args>(path, method, args))
     }
   }
 
@@ -65,7 +67,8 @@ export class RequestBuilder {
       resource : (DappName:string, args:Args) => this.resourceConf<Args, Returns>(path(DappName), method, args),
       axios : (DappName:string, args:Args) => this.axiosConf<Args>(path(DappName), method, args),
       request : (DappName:string, args:Args) => this.requestConf<Args>(path(DappName), method, args),
-      fetch : (DappName:string, args:Args) => this.fetchConf<Args>(path(DappName), method, args)
+      fetch : (DappName:string, args:Args) => this.fetchConf<Args>(path(DappName), method, args),
+      call : async (DappName:string, args:Args):Promise<Returns> => await request(this.requestConf<Args>(path(DappName), method, args))
     }
   }
 

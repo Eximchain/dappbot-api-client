@@ -41,6 +41,7 @@ export interface APIModuleArgs {
 }
 
 export interface ReqFactoryWithArgs<Args, Returns> {
+  call : (args:Args) => Promise<Returns>
   resource : (args:Args) => Resource<Returns>
   axios : (args:Args) => ReqTypes.axios<Args>
   request : (args:Args) => ReqTypes.request<Args>
@@ -48,6 +49,7 @@ export interface ReqFactoryWithArgs<Args, Returns> {
 }
 
 export interface ReqFactoryWithArgsAndPath<Args, Returns> {
+  call : (DappName:string, args:Args) => Promise<Returns>
   resource : (DappName:string, args:Args) => Resource<Returns>
   axios : (DappName:string, args:Args) => ReqTypes.axios<Args>
   request : (DappName:string, args:Args) => ReqTypes.request<Args>
