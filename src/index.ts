@@ -1,5 +1,4 @@
 import User from '@eximchain/dappbot-types/spec/user';
-import { Login } from '@eximchain/dappbot-types/spec/methods/auth';
 import { AuthSetter } from "./types";
 import request from 'request-promise-native';
 import { AuthAPI, PaymentAPI, PrivateAPI, PublicAPI } from './api';
