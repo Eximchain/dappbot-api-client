@@ -1,5 +1,6 @@
 import Auth, {
-  Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset
+  Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset,
+  MfaLoginChallenge, BeginSetupAppMfa, ConfirmSetupAppMfa, SetMfaPreference
 } from '@eximchain/dappbot-types/spec/methods/auth';
 import { APIModuleArgs, ReqFactoryWithArgs } from '../types'
 import RequestBuilder from '../requestBuilder';
@@ -21,6 +22,10 @@ export class AuthAPI {
     this.refresh              = this.builder.reqFactoryWithArgs<Refresh.Args, Refresh.Response>(Refresh.Path, Refresh.HTTP);
     this.beginPasswordReset   = this.builder.reqFactoryWithArgs<BeginPassReset.Args, BeginPassReset.Response>(BeginPassReset.Path, BeginPassReset.HTTP);
     this.confirmPasswordReset = this.builder.reqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>(ConfirmPassReset.Path, ConfirmPassReset.HTTP);
+    this.mfaLoginChallenge    = this.builder.reqFactoryWithArgs<MfaLoginChallenge.Args, MfaLoginChallenge.Response>(MfaLoginChallenge.Path, MfaLoginChallenge.HTTP);
+    this.beginSetupAppMfa     = this.builder.reqFactoryWithArgs<BeginSetupAppMfa.Args, BeginSetupAppMfa.Response>(BeginSetupAppMfa.Path, BeginSetupAppMfa.HTTP);
+    this.confirmSetupAppMfa   = this.builder.reqFactoryWithArgs<ConfirmSetupAppMfa.Args, ConfirmSetupAppMfa.Response>(ConfirmSetupAppMfa.Path, ConfirmSetupAppMfa.HTTP);
+    this.setMfaPreference     = this.builder.reqFactoryWithArgs<SetMfaPreference.Args, SetMfaPreference.Response>(SetMfaPreference.Path, SetMfaPreference.HTTP);
   }
 
   private builder: RequestBuilder
@@ -49,6 +54,26 @@ export class AuthAPI {
    * ReqFactory: Confirm a password reset.
    */
   public confirmPasswordReset: ReqFactoryWithArgs<ConfirmPassReset.Args, ConfirmPassReset.Response>;
+
+  /**
+   * ReqFactory: Respond to an MFA Login Challenge.
+   */
+  public mfaLoginChallenge: ReqFactoryWithArgs<MfaLoginChallenge.Args, MfaLoginChallenge.Response>;
+
+  /**
+   * ReqFactory: Begin setup for App-based MFA.
+   */
+  public beginSetupAppMfa: ReqFactoryWithArgs<BeginSetupAppMfa.Args, BeginSetupAppMfa.Response>;
+
+  /**
+   * ReqFactory: Confirm setup for App-based MFA.
+   */
+  public confirmSetupAppMfa: ReqFactoryWithArgs<ConfirmSetupAppMfa.Args, ConfirmSetupAppMfa.Response>;
+
+  /**
+   * ReqFactory: Set preferred MFA device.
+   */
+  public setMfaPreference: ReqFactoryWithArgs<SetMfaPreference.Args, SetMfaPreference.Response>;
 }
 
 export const passwordChecker = new passwordValidator();
