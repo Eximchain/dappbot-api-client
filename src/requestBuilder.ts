@@ -3,7 +3,6 @@ import request from 'request-promise-native';
 import { request as resourceRequest } from 'react-request-hook';
 import { AuthData } from '@eximchain/dappbot-types/spec/user';
 import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
-import { RootResources } from '@eximchain/dappbot-types/spec/methods';
 import { Headers, ReqTypes, ReqFactoryWithArgs, ReqFactoryWithArgsAndPath } from './types';
 const url = require('url')
 

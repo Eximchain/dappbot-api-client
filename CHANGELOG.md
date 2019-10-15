@@ -1,3 +1,9 @@
+# v1.2.1
+Made the `apiUrl` a `readonly` attribute on the API object, making it easy to determine the current configured API endpoint from any code with access to an API object.
+
+# v1.2.0
+Added support for new API methods related to enabling and using MFA authentication.
+
 # v1.1.0
 Upgraded `requestBuilder`'s `reqFactory` methods to include a fifth key, `call()`.  While the previous four keys just return the configuration objects for various request libraries, the new `call()` function uses `request-promise-native` to actually perform the request and return `Promise<Response>`.  This is ideal for small apps which are mostly just consuming DappBot data.
 

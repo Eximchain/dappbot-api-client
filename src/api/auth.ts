@@ -1,4 +1,4 @@
-import Auth, {
+import {
   Login, NewPassChallenge, Refresh, BeginPassReset, ConfirmPassReset,
   MfaLoginChallenge, BeginSetupAppMfa, ConfirmSetupAppMfa, SetMfaPreference
 } from '@eximchain/dappbot-types/spec/methods/auth';

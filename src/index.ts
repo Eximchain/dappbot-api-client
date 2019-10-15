@@ -35,8 +35,8 @@ export class API {
     this.public = new PublicAPI(moduleArgs);
   }
 
-  private dappbotUrl:string
-  private authData:User.AuthData
+  readonly dappbotUrl:string
+  readonly authData:User.AuthData
   private setAuthData:AuthSetter
   private builder:RequestBuilder
 
