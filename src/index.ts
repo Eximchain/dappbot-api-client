@@ -117,7 +117,7 @@ export class API {
    * and not stale.
    */
   hasActiveAuth():boolean {
-    return !this.hasNoAuth() && !this.hasStaleAuth();
+    return User.authStatus(this.authData).isActive;
   }
 
   /**
@@ -126,6 +126,7 @@ export class API {
    * `ExpiresAt` value says that it is stale.
    */
   hasStaleAuth():boolean {
+    return User.authStatus(this.authData).isStale;
     if (this.hasNoAuth()) return false;
     let expiryDate = Date.parse(this.authData.ExpiresAt);
     return expiryDate !== NaN && Date.now() > expiryDate;
@@ -137,10 +138,7 @@ export class API {
    * meaning that a fresh login is required.
    */
   hasNoAuth():boolean {
-    return (
-      this.authData.RefreshToken === '' || 
-      this.authData.Authorization === ''
-    )
+    return User.authStatus(this.authData).isEmpty;
   }
 }
 

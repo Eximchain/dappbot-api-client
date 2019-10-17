@@ -1,3 +1,6 @@
+# v1.2.2
+Upgraded the `API.isAuth...()` helper functions to rely on the new `User.authStatus()` helper function from `dappbot-types@1.7.6`.
+
 # v1.2.1
 Made the `apiUrl` a `readonly` attribute on the API object, making it easy to determine the current configured API endpoint from any code with access to an API object.
 
