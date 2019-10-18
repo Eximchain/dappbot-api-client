@@ -1,3 +1,6 @@
+# v1.2.3
+Upgrading to get a hotfix for the underlying `hasStaleAuth()` checker.  Also surfacing the `authStatus()` helper directly on the API object, supporting calls like `let { isActive, isStale, isEmpty } = API.authStatus()`;
+
 # v1.2.2
 Upgraded the `API.isAuth...()` helper functions to rely on the new `User.authStatus()` helper function from `dappbot-types@1.7.6`.
 

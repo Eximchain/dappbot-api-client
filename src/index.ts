@@ -112,12 +112,22 @@ export class API {
   }
 
   /**
+   * Check whether the API's authData is
+   * active, stale, or empty with one call.
+   * The more specific functions rely on
+   * this one.
+   */
+  authStatus() {
+    return User.authStatus(this.authData);
+  }
+
+  /**
    * Helper to check the API's authData: only
    * `true` if the authData is both non-null
    * and not stale.
    */
   hasActiveAuth():boolean {
-    return User.authStatus(this.authData).isActive;
+    return this.authStatus().isActive;
   }
 
   /**
@@ -126,10 +136,7 @@ export class API {
    * `ExpiresAt` value says that it is stale.
    */
   hasStaleAuth():boolean {
-    return User.authStatus(this.authData).isStale;
-    if (this.hasNoAuth()) return false;
-    let expiryDate = Date.parse(this.authData.ExpiresAt);
-    return expiryDate !== NaN && Date.now() > expiryDate;
+    return this.authStatus().isStale;
   }
 
   /**
@@ -138,7 +145,7 @@ export class API {
    * meaning that a fresh login is required.
    */
   hasNoAuth():boolean {
-    return User.authStatus(this.authData).isEmpty;
+    return this.authStatus().isEmpty;
   }
 }
 
