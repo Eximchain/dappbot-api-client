@@ -1,5 +1,6 @@
 # Testing Details
 .test-creds.json
+dappbotAuthData.json
 
 # Build
 /dist
