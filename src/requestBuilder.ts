@@ -152,7 +152,7 @@ export class RequestBuilder {
     return Object.assign(
       this.baseConf(method),
       {
-        json: args,
+        json: args || true,
         url: this.buildFullPath(path)
       }
     );

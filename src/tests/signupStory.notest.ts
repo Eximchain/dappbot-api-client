@@ -11,14 +11,13 @@
  * we may need to encode an API key into whatever environment
  * we end up with.
  * 
- * Until we have a resolution for this, they're stubbed out.
+ * Until we have a resolution for this, they're being skipped.
  */
 
-describe('Register for an Account', function(){
+describe.skip('Register for an Account', function(){
   test.todo('Implement signup request')
 });
 
-describe('First Login', function(){
+describe.skip('First Login', function(){
   test.todo('Implement first login challenge response loop');
 });
-
