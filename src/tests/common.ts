@@ -16,7 +16,11 @@ export function sleep(ms:number) {
 
 export function testCreds(){
   const credsPath = path.resolve(process.cwd(), './test-creds.json');
-  return JSON.parse(fs.readFileSync(credsPath).toString())
+  if (fs.existsSync(credsPath)) {
+    return JSON.parse(fs.readFileSync(credsPath).toString())
+  } else {
+    throw new Error(`Please create a file with a valid "username" and "password" at ${credsPath}`);
+  }
 }
 
 export function getConfiguredAPI(existingAuth?:User.AuthData) {
