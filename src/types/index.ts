@@ -1,3 +1,4 @@
+import request from 'request';
 import { Resource } from 'react-request-hook';
 import User from '@eximchain/dappbot-types/spec/user';
 import { HttpMethods } from '@eximchain/dappbot-types/spec/responses';
@@ -16,7 +17,7 @@ export namespace ReqTypes {
   }
 
   export interface request<Args=any> extends base {
-    json: Args
+    json: Args | boolean
     url: string
   }
 
