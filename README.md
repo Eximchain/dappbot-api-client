@@ -275,7 +275,3 @@ This library essentially just uses wrapper functions to instrument Dappbot's und
 ```
 
 Once you've done that, you'll be able to update the type source, save the file, and have those changes immediately reflected here.  If you make a PR here which depends on type changes, make sure to include a link to your PR on `@eximchain/dappbot-types` as well.
-
-### Testing
-
-In order to run the test suite, you need to have a file named `test-creds.json` at the root of the project, and it must include your `username` and `password`.  The tests will authenticate with the API and place the data in a `dappbotAuthData.json` file, also at the root of the directory.  Both are `.gitignore`d.
